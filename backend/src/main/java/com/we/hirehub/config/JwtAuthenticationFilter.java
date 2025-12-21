@@ -31,32 +31,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        /* ======================================================
+         * ✅ 0️⃣ CORS Preflight (OPTIONS) 무조건 통과
+         * ====================================================== */
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String path = request.getRequestURI();
         log.debug("🔍 JWT 필터 실행: {}", path);
 
-        // ✅ 1️⃣ 인증 불필요 경로 화이트리스트 처리
-        if (path.startsWith("/api/auth/")
-                || path.startsWith("/api/public/")
-                // ❌ 온보딩 제거 - 인증 필요하도록 변경
-                // || path.startsWith("/api/onboarding/")
-                || path.startsWith("/api/ai/")           // ✅ 추가
-                || path.startsWith("/api/faq")           // ✅ 추가
-                || path.startsWith("/api/chatbot/")      // ✅ 추가
-                || path.startsWith("/api/board/ai/")     // ✅ 추가
-                || path.startsWith("/swagger-ui/")
-                || path.startsWith("/v3/api-docs/")
-                || path.startsWith("/login")
-                || path.startsWith("/oauth2/")
-                || path.equals("/")
-                || path.startsWith("/ws/")
-                || path.equals("/api/ads")  // ✅ 일반 사용자 광고 조회 추가
+        /* ======================================================
+         * ✅ 1️⃣ 인증 불필요 경로 (화이트리스트)
+         * ====================================================== */
+        if (
+                path.startsWith("/api/auth/")
+                        || path.startsWith("/api/public/")
+                        || path.startsWith("/api/ai/")
+                        || path.startsWith("/api/faq")
+                        || path.startsWith("/api/chatbot/")
+                        || path.startsWith("/api/board/")
+                        || path.startsWith("/api/jobposts/")
+                        || path.startsWith("/api/company/")
+                        || path.startsWith("/api/companies/")
+                        || path.startsWith("/api/reviews/")
+                        || path.startsWith("/api/mypage/favorites/")
+                        || path.startsWith("/swagger-ui/")
+                        || path.startsWith("/v3/api-docs/")
+                        || path.startsWith("/login")
+                        || path.startsWith("/oauth2/")
+                        || path.startsWith("/ws/")
+                        || path.equals("/")
+                        || path.equals("/api/ads")
         ) {
             log.debug("🚫 인증 불필요 경로 → JWT 검증 생략: {}", path);
             filterChain.doFilter(request, response);
             return;
         }
 
-        // ✅ 2️⃣ Authorization 헤더 직접 파싱
+        /* ======================================================
+         * ✅ 2️⃣ Authorization 헤더 파싱
+         * ====================================================== */
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
             log.debug("⚠️ Authorization 헤더 없음 → 필터 통과");
@@ -72,7 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Long userId = tokenProvider.getUserId(token);
                 String email = tokenProvider.getEmail(token);
 
-                // ⭐⭐⭐ 핵심 추가 — MyPage, Token API 에 userId 전달 ⭐⭐⭐
+                /* ⭐ 핵심: Controller에서 바로 쓰도록 userId 주입 */
                 request.setAttribute("userId", userId);
 
                 List<GrantedAuthority> authorities =
@@ -90,7 +106,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.debug("⚠️ 유효하지 않은 토큰");
             }
         } catch (Exception e) {
-            log.error("❌ JWT 필터 예외: {}", e.getMessage());
+            log.error("❌ JWT 필터 예외", e);
         }
 
         filterChain.doFilter(request, response);
