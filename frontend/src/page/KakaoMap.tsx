@@ -10,21 +10,21 @@ export default function KakaoMap({ lat, lng }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let map: kakao.maps.Map;
-    console.error("Kakao SDK not ready");
+    let map: kakao.maps.Map | null = null;
 
     loadKakaoMap().then(() => {
       const container = mapRef.current;
       if (!container) return;
+      console.error("Kakao SDK not ready");
 
-      map = new kakao.maps.Map(container, {
-        center: new kakao.maps.LatLng(lat, lng),
+      map = new window.kakao.maps.Map(container, {
+        center: new window.kakao.maps.LatLng(lat, lng),
         level: 3,
       });
 
-      new kakao.maps.Marker({
+      new window.kakao.maps.Marker({
         map,
-        position: new kakao.maps.LatLng(lat, lng),
+        position: new window.kakao.maps.LatLng(lat, lng),
       });
     });
   }, [lat, lng]);
