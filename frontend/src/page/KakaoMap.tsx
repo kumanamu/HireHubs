@@ -1,47 +1,38 @@
 import { useEffect, useRef } from "react";
 
-interface KakaoMapProps {
+interface Props {
   lat: number;
   lng: number;
 }
 
-const KakaoMap: React.FC<KakaoMapProps> = ({ lat, lng }) => {
-  const mapRef = useRef<HTMLDivElement | null>(null);
+export default function KakaoMap({ lat, lng }: Props) {
+  const mapRef = useRef<HTMLDivElement>(null);
   const kakaoMapRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!window.kakao || !window.kakao.maps || !mapRef.current) return;
+    if (!window.kakao || !mapRef.current) return;
 
-    const { kakao } = window;
+    const center = new window.kakao.maps.LatLng(lat, lng);
 
-    kakao.maps.load(() => {
-      const center = new kakao.maps.LatLng(lat, lng);
-
-      kakaoMapRef.current = new kakao.maps.Map(mapRef.current, {
-        center,
-        level: 3,
-      });
-
-      new kakao.maps.Marker({
-        position: center,
-        map: kakaoMapRef.current,
-      });
-
-      /** 🔥 핵심: 강제 리레이아웃 */
-      setTimeout(() => {
-        kakaoMapRef.current.relayout();
-        kakaoMapRef.current.setCenter(center);
-      }, 300);
+    const map = new window.kakao.maps.Map(mapRef.current, {
+      center,
+      level: 3,
     });
+
+    kakaoMapRef.current = map;
+
+    // 🔥🔥🔥 최후 루트 핵심
+    setTimeout(() => {
+      map.relayout();
+      map.setCenter(center);
+    }, 300);
   }, [lat, lng]);
 
   return (
     <div
       ref={mapRef}
-      className="w-full h-full min-h-[200px]"
-      style={{ position: "relative" }}
+      className="w-full h-full"
+      style={{ minHeight: "300px" }}
     />
   );
-};
-
-export default KakaoMap;
+}
