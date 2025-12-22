@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { loadKakaoMap } from "../utils/kakaoLoader";
+import { loadKakaoMap } from "./kakaoLoader";
 
 declare global {
   interface Window {
@@ -17,28 +17,24 @@ const KakaoMap: React.FC<Props> = ({ lat, lng }) => {
   const KAKAO_KEY = import.meta.env.VITE_KAKAO_MAP_JS_KEY;
 
   useEffect(() => {
-    if (!ref.current) return;
+    let map: any;
 
     loadKakaoMap(KAKAO_KEY).then(() => {
-      const center = new window.kakao.maps.LatLng(lat, lng);
+      if (!ref.current) return;
 
-      const map = new window.kakao.maps.Map(ref.current, {
+      const center = new window.kakao.maps.LatLng(lat, lng);
+      map = new window.kakao.maps.Map(ref.current, {
         center,
         level: 3,
       });
 
-      new window.kakao.maps.Marker({
-        map,
-        position: center,
-      });
-
-      // 🔥 이거 없으면 모바일/SPA에서 안 나오는 경우 있음
-      setTimeout(() => {
-        map.relayout();
-        map.setCenter(center);
-      }, 0);
+      new window.kakao.maps.Marker({ map, position: center });
     });
-  }, [lat, lng, KAKAO_KEY]);
+
+    return () => {
+      map = null;
+    };
+  }, [lat, lng]);
 
   return <div ref={ref} className="w-full h-full" />;
 };

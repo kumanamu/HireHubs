@@ -359,14 +359,22 @@ const JobDetail: React.FC<JobDetailProps> = ({ jobId, onBack }) => {
                 )}
 
                 {/* 근무지역 지도 */}
-                {job.lat != null && job.lng != null && (
-                  <section>
-                    <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 md:mb-4">근무지역</h2>
-                    <div className="w-full h-[200px] sm:h-[280px] rounded-lg overflow-hidden border border-gray-200">
-                      <KakaoMap lat={job.lat} lng={job.lng} />
-                    </div>
-                    <p className="mt-3 ml-2 text-gray-700 font-medium">{job.location}</p>
-                  </section>
+              <section>
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 md:mb-4">
+                  근무지역
+                </h2>
+
+                {/* ⬇️ 컨테이너는 항상 존재 */}
+                <div className="w-full h-[200px] sm:h-[280px] rounded-lg overflow-hidden border border-gray-200">
+                  {job && job.lat != null && job.lng != null && (
+                    <KakaoMap lat={job.lat} lng={job.lng} />
+                  )}
+                </div>
+
+                <p className="mt-3 ml-2 text-gray-700 font-medium">
+                  {job?.location}
+                </p>
+              </section>
                 )}
               </div>
             </div>
