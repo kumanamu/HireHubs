@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { loadKakaoMap } from "./kakaoLoader";
 
 interface Props {
   lat: number;
@@ -8,28 +9,25 @@ interface Props {
 export default function KakaoMap({ lat, lng }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
 
-useEffect(() => {
-  if (!window.kakao || !window.kakao.maps) {
+  useEffect(() => {
+    let map: kakao.maps.Map;
     console.error("Kakao SDK not ready");
-    return;
-  }
 
-  window.kakao.maps.load(() => {
-    const container = mapRef.current;
-    if (!container) return;
+    loadKakaoMap().then(() => {
+      const container = mapRef.current;
+      if (!container) return;
 
-    const map = new window.kakao.maps.Map(container, {
-      center: new window.kakao.maps.LatLng(lat, lng),
-      level: 3,
+      map = new kakao.maps.Map(container, {
+        center: new kakao.maps.LatLng(lat, lng),
+        level: 3,
+      });
+
+      new kakao.maps.Marker({
+        map,
+        position: new kakao.maps.LatLng(lat, lng),
+      });
     });
-
-    new window.kakao.maps.Marker({
-      map,
-      position: new window.kakao.maps.LatLng(lat, lng),
-    });
-  });
-}, [lat, lng]);
-
+  }, [lat, lng]);
 
   return <div ref={mapRef} className="w-full h-full" />;
 }
