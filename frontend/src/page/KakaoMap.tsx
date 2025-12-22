@@ -1,50 +1,46 @@
 import { useEffect, useRef } from "react";
+import { loadKakaoMap } from "../utils/kakaoLoader";
 
-// 👇 이 코드 딱 한 줄 추가
 declare global {
   interface Window {
     kakao: any;
   }
 }
 
-const KakaoMap = ({ lat, lng }: { lat: number; lng: number }) => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_MAP_JS_KEY;
+interface Props {
+  lat: number;
+  lng: number;
+}
+
+const KakaoMap: React.FC<Props> = ({ lat, lng }) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_MAP_JS_KEY;
 
   useEffect(() => {
-    const script = document.createElement("script");
-script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_KEY}&autoload=false`;
-    script.async = true;
+    if (!mapRef.current) return;
 
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        if (!mapContainer.current) return;
+    loadKakaoMap(KAKAO_JS_KEY).then(() => {
+      const center = new window.kakao.maps.LatLng(lat, lng);
 
-        const center = new window.kakao.maps.LatLng(lat, lng);
-
-        const map = new window.kakao.maps.Map(mapContainer.current, {
-          center,
-          level: 3,
-        });
-
-        // 마커
-        new window.kakao.maps.Marker({ map, position: center });
+      const map = new window.kakao.maps.Map(mapRef.current, {
+        center,
+        level: 3,
       });
-    };
 
-    document.head.appendChild(script);
+      new window.kakao.maps.Marker({
+        map,
+        position: center,
+      });
 
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, [lat, lng]);
+      // 🔑 레이아웃 강제 재계산 (이거 없으면 height 있어도 안 보이는 케이스 있음)
+      setTimeout(() => {
+        map.relayout();
+        map.setCenter(center);
+      }, 0);
+    });
+  }, [lat, lng, KAKAO_JS_KEY]);
 
-  return (
-    <div
-      ref={mapContainer}
-      style={{ width: "100%", height: "300px", borderRadius: "10px" }}
-    />
-  );
+  return <div ref={mapRef} className="w-full h-full" />;
 };
 
 export default KakaoMap;
