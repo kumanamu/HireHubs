@@ -8,19 +8,28 @@ interface Props {
 export default function KakaoMap({ lat, lng }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!window.kakao || !window.kakao.maps || !mapRef.current) {
-      console.error("Kakao SDK not loaded");
-      return;
-    }
+useEffect(() => {
+  if (!window.kakao || !window.kakao.maps) {
+    console.error("Kakao SDK not ready");
+    return;
+  }
 
-    const center = new window.kakao.maps.LatLng(lat, lng);
+  window.kakao.maps.load(() => {
+    const container = mapRef.current;
+    if (!container) return;
 
-    new window.kakao.maps.Map(mapRef.current, {
-      center,
+    const map = new window.kakao.maps.Map(container, {
+      center: new window.kakao.maps.LatLng(lat, lng),
       level: 3,
     });
-  }, [lat, lng]);
+
+    new window.kakao.maps.Marker({
+      map,
+      position: new window.kakao.maps.LatLng(lat, lng),
+    });
+  });
+}, [lat, lng]);
+
 
   return <div ref={mapRef} className="w-full h-full" />;
 }
