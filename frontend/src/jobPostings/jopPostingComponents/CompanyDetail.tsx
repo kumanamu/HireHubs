@@ -286,9 +286,9 @@
                      회사위치
                    </h2>
 
-                   <div className="w-full h-[300px] rounded-lg border border-gray-200">
-                     <KakaoMap lat={company.lat} lng={company.lng} />
-                   </div>
+               <div className="w-full h-[300px] rounded-lg overflow-hidden border border-gray-200">
+                 <KakaoMap lat={job.lat} lng={job.lng} />
+               </div>
 
                    <p className="mt-3 ml-2 text-gray-700 font-medium">
                      {company.address}
