@@ -5,33 +5,22 @@ interface Props {
   lng: number;
 }
 
-const KakaoMap: React.FC<Props> = ({ lat, lng }) => {
+export default function KakaoMap({ lat, lng }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!mapRef.current) return;
-    if (!window.kakao || !window.kakao.maps) {
-      console.error("Kakao SDK not loaded (script level)");
+    if (!window.kakao || !window.kakao.maps || !mapRef.current) {
+      console.error("Kakao SDK not loaded");
       return;
     }
 
-    // 🔥 autoload=false 이면 이게 필수
-    window.kakao.maps.load(() => {
-      const center = new window.kakao.maps.LatLng(lat, lng);
+    const center = new window.kakao.maps.LatLng(lat, lng);
 
-      const map = new window.kakao.maps.Map(mapRef.current!, {
-        center,
-        level: 3,
-      });
-
-      new window.kakao.maps.Marker({
-        map,
-        position: center,
-      });
+    new window.kakao.maps.Map(mapRef.current, {
+      center,
+      level: 3,
     });
   }, [lat, lng]);
 
   return <div ref={mapRef} className="w-full h-full" />;
-};
-
-export default KakaoMap;
+}
