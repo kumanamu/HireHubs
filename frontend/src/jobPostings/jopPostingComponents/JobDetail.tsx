@@ -364,10 +364,8 @@ const JobDetail: React.FC<JobDetailProps> = ({ jobId, onBack }) => {
                    근무지역
                  </h2>
 
-                 <div className="w-full h-[200px] sm:h-[280px] rounded-lg overflow-hidden border border-gray-200">
-                   {job && job.lat !== null && job.lng !== null ? (
-                     <KakaoMap lat={job.lat} lng={job.lng} />
-                   ) : null}
+                 <div className="w-full h-[200px] sm:h-[280px] rounded-lg border border-gray-200">
+                   <KakaoMap lat={job.lat} lng={job.lng} />
                  </div>
 
                  <p className="mt-3 ml-2 text-gray-700 font-medium">

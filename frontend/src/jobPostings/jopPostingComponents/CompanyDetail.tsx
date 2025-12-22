@@ -285,11 +285,9 @@
                회사위치
              </h2>
 
-             <div className="w-full h-[200px] sm:h-[280px] rounded-lg overflow-hidden border border-gray-200">
-               {company && company.lat !== null && company.lng !== null ? (
-                 <KakaoMap lat={company.lat} lng={company.lng} />
-               ) : null}
-             </div>
+            <div className="w-full h-[200px] sm:h-[280px] rounded-lg border border-gray-200">
+              <KakaoMap lat={job.lat} lng={job.lng} />
+            </div>
 
              <p className="mt-3 ml-2 text-gray-700 font-medium">
                {company?.address}

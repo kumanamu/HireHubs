@@ -1,4 +1,5 @@
 // src/page/kakaoLoader.ts
+console.log("🔥 KAKAO KEY:", import.meta.env.VITE_KAKAO_MAP_JS_KEY);
 let kakaoPromise: Promise<void> | null = null;
 
 export const loadKakaoMap = () => {
