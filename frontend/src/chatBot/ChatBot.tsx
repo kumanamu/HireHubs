@@ -221,7 +221,7 @@ const ChatBot: React.FC = () => {
   useEffect(() => {
     // SockJS는 http:// 또는 https:// URL을 받아서 자동으로 WebSocket으로 업그레이드합니다
     // ws:// 또는 wss:// URL을 직접 전달하면 안 됩니다!
-    const wsUrl = API_BASE_URL ? `${API_BASE_URL}/ws` : '/ws';
+    const wsUrl = '/ws';
     console.log('SockJS URL:', wsUrl);
 
     const sock = new SockJS(wsUrl);

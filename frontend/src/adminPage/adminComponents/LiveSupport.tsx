@@ -331,7 +331,7 @@ const LiveSupport: React.FC = () => {
   // STOMP 연결
   useEffect(() => {
     // SockJS는 http:// 또는 https:// URL을 받아서 자동으로 WebSocket으로 업그레이드
-    const wsUrl = API_BASE_URL ? `${API_BASE_URL}/ws` : '/ws';
+    const wsUrl = '/ws';
     console.log('🔌 SockJS 연결 시도:', wsUrl);
 
     const sock = new SockJS(wsUrl);

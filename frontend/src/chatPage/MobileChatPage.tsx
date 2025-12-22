@@ -111,7 +111,7 @@ const MobileChatPage: React.FC = () => {
 
       console.log('WebSocket 연결 시도, 토큰 존재:', !!token);
 
-      const wsUrl = API_BASE_URL ? `${API_BASE_URL}/ws` : '/ws';
+      const wsUrl = '/ws';
       console.log('SockJS URL:', wsUrl);
 
       const client = new Client({
