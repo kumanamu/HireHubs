@@ -13,16 +13,16 @@ interface Props {
 }
 
 const KakaoMap: React.FC<Props> = ({ lat, lng }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_MAP_JS_KEY;
+  const ref = useRef<HTMLDivElement>(null);
+  const KAKAO_KEY = import.meta.env.VITE_KAKAO_MAP_JS_KEY;
 
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!ref.current) return;
 
-    loadKakaoMap(KAKAO_JS_KEY).then(() => {
+    loadKakaoMap(KAKAO_KEY).then(() => {
       const center = new window.kakao.maps.LatLng(lat, lng);
 
-      const map = new window.kakao.maps.Map(mapRef.current, {
+      const map = new window.kakao.maps.Map(ref.current, {
         center,
         level: 3,
       });
@@ -32,15 +32,15 @@ const KakaoMap: React.FC<Props> = ({ lat, lng }) => {
         position: center,
       });
 
-      // 🔑 레이아웃 강제 재계산 (이거 없으면 height 있어도 안 보이는 케이스 있음)
+      // 🔥 이거 없으면 모바일/SPA에서 안 나오는 경우 있음
       setTimeout(() => {
         map.relayout();
         map.setCenter(center);
       }, 0);
     });
-  }, [lat, lng, KAKAO_JS_KEY]);
+  }, [lat, lng, KAKAO_KEY]);
 
-  return <div ref={mapRef} className="w-full h-full" />;
+  return <div ref={ref} className="w-full h-full" />;
 };
 
 export default KakaoMap;
