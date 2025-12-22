@@ -5,6 +5,7 @@ import com.we.hirehub.dto.user.CalendarDto;
 import com.we.hirehub.dto.common.PagedResponse;
 import com.we.hirehub.dto.user.FavoriteDto;
 import com.we.hirehub.dto.support.JobPostsDto;
+import com.we.hirehub.service.support.JobPostRecommendationService;
 import com.we.hirehub.service.support.JobPostScrapService;
 import com.we.hirehub.service.support.JobPostService;
 import com.we.hirehub.service.support.JobPostsCalendarService;
@@ -28,6 +29,7 @@ public class JobPostController {
   private final JobPostScrapService jobPostScrapService;
   private final JobPostsCalendarService jobPostsCalendarService;
   private final JobPostService jobPostService;
+  private final JobPostRecommendationService jobPostRecommendationService; // ✅ 추가
 
   private Long userId(Authentication auth) {
     if (auth == null || auth.getPrincipal() == null) {
@@ -136,7 +138,16 @@ public class JobPostController {
    */
   @GetMapping("/recommended")
   public List<JobPostsDto> getRecommended(Authentication auth) {
-    Long uid = userId(auth); // 현재 로그인한 사용자 ID 가져오기
-    return jobPostService.getRecommendedJobs(uid); // 서비스 호출
+
+    // ✅ 비로그인
+    if (auth == null || auth.getPrincipal() == null) {
+      log.info("🔥 recommended: 비로그인 → 인기 공고");
+      return jobPostRecommendationService.getPopularJobs();
+    }
+
+    Long uid = userId(auth);
+    log.info("🔥 recommended userId={}", uid);
+
+    return jobPostRecommendationService.getRecommendedJobs(uid);
   }
 }

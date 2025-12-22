@@ -57,18 +57,23 @@ public class JobPostRecommendationService {
 
     List<JobPostsDto> recommended = allJobs.stream()
             .map(job -> {
+
               double score = calculateMatchScore(user, job);
               JobPostsDto dto = JobPostsDto.toDto(job);
               dto.setRecommendScore(score);
+
               return dto;
+
             })
             .sorted(
                     Comparator.comparingDouble(JobPostsDto::getRecommendScore).reversed()
                             .thenComparing((JobPostsDto dto) -> dto.getViews() != null ? dto.getViews() : 0L)
                             .reversed()
+
             )
             .limit(15)
             .collect(Collectors.toList());
+
 
     log.info("🎯 추천 {}개 반환 / 최고점 {}", recommended.size(),
             recommended.isEmpty() ? 0 : recommended.get(0).getRecommendScore());
@@ -77,7 +82,7 @@ public class JobPostRecommendationService {
   }
 
   /** 인기 공고 fallback */
-  private List<JobPostsDto> getPopularJobs() {
+  public List<JobPostsDto> getPopularJobs() {
     return jobPostsRepository.findAllWithTechStacks().stream()
             .sorted(Comparator.comparingLong(JobPosts::getViews).reversed())
             .limit(15)
