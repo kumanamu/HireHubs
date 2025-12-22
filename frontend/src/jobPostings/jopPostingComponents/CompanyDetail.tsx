@@ -279,22 +279,22 @@
                 {/* 기업 분석 차트 */}
                 <CompanyCharts companyId={company.id} />
 
-               {/* 회사 위치 지도 */}
-               {company.lat != null && company.lng != null && (
-                 <section className="mt-6 md:mt-10">
-                   <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 md:mb-4">
-                     회사위치
-                   </h2>
+              {/* 회사 위치 지도 */}
+              {company.lat != null && company.lng != null && (
+                <section className="mt-6 md:mt-10">
+                  <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 md:mb-4">
+                    회사위치
+                  </h2>
 
-               <div className="w-full h-[300px] rounded-lg overflow-hidden border border-gray-200">
-                 <KakaoMap lat={job.lat} lng={job.lng} />
-               </div>
+                  <div className="w-full h-[300px] rounded-lg overflow-hidden border border-gray-200">
+                    <KakaoMap lat={company.lat} lng={company.lng} />
+                  </div>
 
-                   <p className="mt-3 ml-2 text-gray-700 font-medium">
-                     {company.address}
-                   </p>
-                 </section>
-               )}
+                  <p className="mt-3 ml-2 text-gray-700 font-medium">
+                    {company.address}
+                  </p>
+                </section>
+              )}
 
 
                 {/* 리뷰 섹션 */}
