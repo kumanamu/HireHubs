@@ -296,7 +296,7 @@
              </p>
            </section>
 
-                )}
+
 
                 {/* 리뷰 섹션 */}
                 <div className="mt-6 md:mt-10">

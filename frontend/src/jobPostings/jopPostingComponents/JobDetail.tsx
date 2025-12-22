@@ -374,7 +374,7 @@ const JobDetail: React.FC<JobDetailProps> = ({ jobId, onBack }) => {
                    {job?.location}
                  </p>
                </section>
-                )}
+
               </div>
             </div>
           </div>
