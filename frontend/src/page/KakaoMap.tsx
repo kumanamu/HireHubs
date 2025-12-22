@@ -10,6 +10,7 @@ declare global {
 const KakaoMap = ({ lat, lng }: { lat: number; lng: number }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
 const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_MAP_JS_KEY;
+console.log("🧪 KAKAO KEY =", KAKAO_JS_KEY);
 
   useEffect(() => {
     const script = document.createElement("script");
