@@ -1,42 +1,50 @@
 import { useEffect, useRef } from "react";
-import { loadKakaoMap } from "./kakaoLoader";
 
-interface Props {
-  lat: number;
-  lng: number;
+// 👇 이 코드 딱 한 줄 추가
+declare global {
+  interface Window {
+    kakao: any;
+  }
 }
 
-export default function KakaoMap({ lat, lng }: Props) {
-  const mapRef = useRef<HTMLDivElement>(null);
+const KakaoMap = ({ lat, lng }: { lat: number; lng: number }) => {
+  const mapContainer = useRef<HTMLDivElement>(null);
+const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_MAP_JS_KEY;
 
   useEffect(() => {
-    let mounted = true;
+    const script = document.createElement("script");
+script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_KEY}&autoload=false`;
+    script.async = true;
 
-    loadKakaoMap()
-      .then(() => {
-        if (!mounted) return;
+    script.onload = () => {
+      window.kakao.maps.load(() => {
+        if (!mapContainer.current) return;
 
-        const container = mapRef.current;
-        if (!container) return;
+        const center = new window.kakao.maps.LatLng(lat, lng);
 
-        const map = new window.kakao.maps.Map(container, {
-          center: new window.kakao.maps.LatLng(lat, lng),
+        const map = new window.kakao.maps.Map(mapContainer.current, {
+          center,
           level: 3,
         });
 
-        new window.kakao.maps.Marker({
-          map,
-          position: new window.kakao.maps.LatLng(lat, lng),
-        });
-      })
-      .catch((e) => {
-        console.error("Kakao map init failed", e);
+        // 마커
+        new window.kakao.maps.Marker({ map, position: center });
       });
+    };
+
+    document.head.appendChild(script);
 
     return () => {
-      mounted = false;
+      document.head.removeChild(script);
     };
   }, [lat, lng]);
 
-  return <div ref={mapRef} className="w-full h-full" />;
-}
+  return (
+    <div
+      ref={mapContainer}
+      style={{ width: "100%", height: "300px", borderRadius: "10px" }}
+    />
+  );
+};
+
+export default KakaoMap;
